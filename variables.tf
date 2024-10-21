@@ -23,6 +23,38 @@ variable "virtual_hub" {
   })
 }
 
+variable "virtual_hub_routing_intent" {
+  description = "Virtual Hub Routing Intent"
+  type = object({
+    name = string
+  })
+}
+
+variable "firewall_policy" {
+  description = "Firewall Policy"
+  type = object({
+    name                     = string
+    location                 = string
+    sku                      = string
+    threat_intelligence_mode = string
+    dns = object({
+      proxy_enabled = bool
+      servers       = list(string)
+    })
+  })
+}
+
+variable "azfirewall" {
+  description = "Azure Firewall"
+  type = object({
+    name            = string
+    location        = string
+    sku_name        = string
+    sku_tier        = string
+    public_ip_count = number
+  })
+}
+
 variable "virtual_network" {
   description = "Virtual Network"
   type = object({
@@ -32,3 +64,10 @@ variable "virtual_network" {
   })
 }
 
+variable "virtual_network_subnets" {
+  description = "Virtual Network Subnets"
+  type = list(object({
+    name           = string
+    address_prefix = list(string)
+  }))
+}
