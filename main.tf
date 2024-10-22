@@ -29,7 +29,7 @@ resource "azurerm_virtual_hub_routing_intent" "vhub_routing_intent" {
   }
   routing_policy {
     name         = "_policy_PrivateTraffic"
-    destinations = ["Internet"]
+    destinations = ["PrivateTraffic"]
     next_hop     = azurerm_firewall.azfirewall.id
   }
 }
@@ -78,6 +78,13 @@ resource "azurerm_subnet" "hubsubnets" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.hubvnet.name
   address_prefixes     = var.virtual_network_subnets[count.index].address_prefix
+}
+
+resource "azurerm_virtual_hub_connection" "hubvnet_connection" {
+  name                      = "${azurerm_virtual_hub.vhub.name}-to-${azurerm_virtual_network.hubvnet.name}"
+  virtual_hub_id            = azurerm_virtual_hub.vhub.id
+  remote_virtual_network_id = azurerm_virtual_network.hubvnet.id
+  internet_security_enabled = true
 }
 
 ## nsg's

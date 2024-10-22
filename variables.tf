@@ -33,14 +33,14 @@ variable "virtual_hub_routing_intent" {
 variable "firewall_policy" {
   description = "Firewall Policy"
   type = object({
-    name                     = string
-    location                 = string
-    sku                      = string
-    threat_intelligence_mode = string
+    name     = string
+    location = string
+    sku      = string
     dns = object({
       proxy_enabled = bool
       servers       = list(string)
     })
+    threat_intelligence_mode = optional(string, null)
   })
 }
 
