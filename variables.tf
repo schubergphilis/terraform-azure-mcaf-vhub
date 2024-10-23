@@ -71,3 +71,10 @@ variable "virtual_network_subnets" {
     address_prefix = list(string)
   }))
 }
+
+variable "private_dns_zones" {
+  description = "Private DNS Zones"
+  type = list(object({
+    name = string
+  }))
+}

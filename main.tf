@@ -17,7 +17,6 @@ resource "azurerm_virtual_hub" "vhub" {
   address_prefix      = var.virtual_hub.address_prefix
 }
 
-
 resource "azurerm_virtual_hub_routing_intent" "vhub_routing_intent" {
   name           = var.virtual_hub_routing_intent.name
   virtual_hub_id = azurerm_virtual_hub.vhub.id
@@ -33,7 +32,6 @@ resource "azurerm_virtual_hub_routing_intent" "vhub_routing_intent" {
     next_hop     = azurerm_firewall.azfirewall.id
   }
 }
-
 
 resource "azurerm_firewall_policy" "azfwpolicy" {
   name                     = var.firewall_policy.name
@@ -64,7 +62,6 @@ resource "azurerm_firewall" "azfirewall" {
   firewall_policy_id = azurerm_firewall_policy.azfwpolicy.id
 }
 
-
 resource "azurerm_virtual_network" "hubvnet" {
   name                = var.virtual_network.name
   resource_group_name = azurerm_resource_group.rg.name
@@ -80,6 +77,7 @@ resource "azurerm_subnet" "hubsubnets" {
   address_prefixes     = var.virtual_network_subnets[count.index].address_prefix
 }
 
+
 resource "azurerm_virtual_hub_connection" "hubvnet_connection" {
   name                      = "${azurerm_virtual_hub.vhub.name}-to-${azurerm_virtual_network.hubvnet.name}"
   virtual_hub_id            = azurerm_virtual_hub.vhub.id
@@ -87,7 +85,20 @@ resource "azurerm_virtual_hub_connection" "hubvnet_connection" {
   internet_security_enabled = true
 }
 
-## nsg's
+resource "azurerm_private_dns_zone" "private_dns_zones" {
+    count              = length(var.private_dns_zones)
+    name               = var.private_dns_zones[count.index].name
+    resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_private_dns_zone_virtual_network_link" "dns_zone_vnet_link" {
+    count                = length(var.private_dns_zones)
+    name                 = "${azurerm_private_dns_zone.private_dns_zones[count.index].name}-link"
+    resource_group_name  = azurerm_resource_group.rg.name
+    private_dns_zone_name = azurerm_private_dns_zone.private_dns_zones[count.index].name
+    virtual_network_id   = azurerm_virtual_network.hubvnet.id
+}
+
 ## ip groups
 ## vpns
 ## rune collections
